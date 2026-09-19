@@ -2,6 +2,8 @@
 
 ## Open Numerical Propulsion & Digital Twin Simulation Platform
 
+**Expanded scope:** a categorized simulation ecosystem spanning numerical libraries, propulsion cycles, electrified systems, CFD/HPC, aerodynamics, neural PDEs, ROMs, aircraft optimization and specialist research. The catalog separates open execution candidates from external-runtime dependencies and unresolved references.
+
 > An open-source engineering compendium and modular reference
 > architecture for numerical propulsion system simulation,
 > Modelica-based multiphysics, CFD, MDAO, AI-assisted reduced-order
@@ -44,6 +46,7 @@ propulsion models.
 -   [MDAO and Optimization](#mdao-and-optimization)
 -   [Open-Source Technology
     Compendium](#open-source-technology-compendium)
+-   [Integration Profiles and Open Alternatives](#integration-profiles-and-open-alternatives)
 -   [MBSE Engineering Process](#mbse-engineering-process)
 -   [Modular Propulsion Concept](#modular-propulsion-concept)
 -   [Repository Structure](#repository-structure)
@@ -890,62 +893,193 @@ operating cost proxies.
 
 # Open-Source Technology Compendium
 
-The following technologies are research references unless explicitly
-declared as dependencies by a module.
+This categorized catalog consolidates the requested alternatives into the existing **OpenTwin Propulsion** architecture. Entries are candidates or research references, not installed dependencies or working integrations. Source documentation was reviewed on 2026-09-19; exact revisions, transitive dependencies and executable compatibility must be recorded before adoption.
 
-## Propulsion Cycle and System Simulation
+**Classification:** **OPEN CANDIDATE** = candidate for an open execution profile; **SPECIALIST** = optional domain-specific tool; **EXTERNAL RUNTIME** = published source/model requiring a separate platform; **RESEARCH** = exploratory reference; **UNRESOLVED** = identity or licensing still needs confirmation. These labels describe proposed integration roles, not a legal license audit.
 
-  Technology                Research Role
-  ------------------------- ---------------------------------------------
-  pyCycle                   Gas-turbine cycle modeling
-  T-MATS                    Thermodynamic modeling and control research
-  OpenMDAO                  Multidisciplinary analysis and optimization
-  Aviary                    Aircraft/propulsion analysis workflows
-  Modelica / OpenModelica   Multidomain physical modeling
+## 1. Scientific Computing and Numerical Foundations
 
-## CFD and Gas Dynamics
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [Raven](https://github.com/raven-ml/raven) | OCaml ecosystem for arrays, differentiation, neural networks, dataframes and experiment workflows; optional typed numerical/AI service | **OPEN CANDIDATE / experimental**. README declares ISC and alpha status. Keep behind a process/API boundary; no assumption of direct Python or FMI compatibility. |
+| [Apache Mahout](https://mahout.apache.org/) | Scalable ML ecosystem; the requested distributed-linear-algebra role belongs to its historical numerical stack | **SPECIALIST**. The current project site emphasizes Qumat. Pin the specific historical module/release if evaluating distributed linear algebra; do not equate Qumat with a CFD solver or silently substitute it. |
+| Ptolemaeus | Requested Java mathematics library; potential JVM numerical adapter | **UNRESOLVED**. A matching authoritative Java library was not established. Preserve the entry without inventing a repository, license or API. Do not confuse it with Ptolemy II or similarly named projects. |
+| [Ascent](https://github.com/AnyarInc/Ascent) | C++ differential-equation integration and modular simulation; candidate for lightweight ODE components | **OPEN CANDIDATE**. README describes Apache licensing and C++17. Benchmark the selected integrator; do not repeat comparative speed claims as jfxnpss results. |
 
-  Technology               Research Role
-  ------------------------ -----------------------------------
-  SU2                      CFD and design optimization
-  Nek5000-family methods   High-order CFD research
-  OpenFOAM ecosystem       General CFD research
-  GDTk                     Gas-dynamics research
-  hyStrath                 High-speed/rarefied-flow research
-  dsmcFoam+                DSMC research
+## 2. Aeronautical Geometry, Performance and Reference Programs
 
-## Reduced-Order and Data-Driven Modeling
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [Public Domain Aeronautical Software — PDAS](https://www.pdas.com/) | Collection of aeronautical analysis programs; reference methods and selected comparison cases | **SPECIALIST / reference collection**. Assess documentation, provenance, compiler needs and distribution conditions program by program; this is not a unified solver API. |
+| [OpenVSP](https://github.com/OpenVSP/OpenVSP) | Parametric aircraft geometry; geometry generation and analysis-input preparation | **OPEN CANDIDATE**. README identifies NOSA 1.3. Geometry export does not automatically supply a CFD-quality mesh or validated aircraft model. |
+| [OpenAP](https://github.com/junzis/openap) | Aircraft performance, fuel use and emissions modeling for air-transport studies | **OPEN CANDIDATE**. README identifies LGPL v3. Convert its documented mixed units at the adapter boundary; optional BADA access is separate from the open-data profile. |
 
-Research areas include:
+## 3. Propulsion Cycles, Thermofluids and Electrified Systems
 
--   ROM/PDE methods;
--   neural reduced-order models;
--   physics-informed ML;
--   NeuralFoil-style surrogate approaches;
--   AI-assisted performance prediction.
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [pyCycle](https://github.com/OpenMDAO/pyCycle) | Thermodynamic cycle modeling on OpenMDAO, primarily jet-engine performance; default cycle-model candidate | **OPEN CANDIDATE**. Python package is `om-pycycle`, imported as `pycycle`. Pin compatible OpenMDAO versions and thermodynamic data; do not assume default fuel tables cover hydrogen. |
+| [PropulsionSystem](https://github.com/zeta-plusplus/PropulsionSystem) | Modelica thermo-fluid and thermodynamic component library for aircraft propulsion and related systems | **OPEN CANDIDATE**. This matches the unnamed library description supplied in the request. README declares GPL v3 and dependencies including FluidSystemComponents, InteractiveSimulation and Modelica_DeviceDrivers. Test selected examples with the chosen OpenModelica release. |
+| [OpenModelica](https://openmodelica.org/) / Modelica libraries | Equation-based thermal, fluid, mechanical, electrical and control models | **OPEN CANDIDATE**, retained from the existing backbone. Select libraries independently; use FMI only where export/import capabilities have been demonstrated. |
+| [NPSS Power System Library — PSL](https://github.com/nasa/NPSS-Power-System-Library) | Electrical components, machines, ports and buses that connect to NPSS propulsion models | **EXTERNAL RUNTIME**. Requires an NPSS environment. Public library source does not establish an open NPSS runtime; keep outside the default open execution profile. |
+| [T-MATS](https://github.com/nasa/T-MATS) | Toolbox for modeling and analysis of thermodynamic systems, including gas-turbine models and controls | **EXTERNAL RUNTIME**. Source is published, but its MATLAB/Simulink environment is a separate dependency. Use as a comparison/reference profile rather than claim a fully open runtime. |
+| [AGTF30-e](https://github.com/nasa/AGTF30-e) | Advanced Geared Turbofan 30,000 lbf Electrified research model; conventional, electric boost and power-extraction studies | **EXTERNAL RUNTIME / research model**. Uses MATLAB/Simulink and T-MATS. It is a model, not a generic solver or demonstrated physical engine. Preserve the bundled dependency compatibility. |
 
-## Aerodynamics and Coupled Analysis
+The open alternative to the external-runtime profile is a **new, independently validated model** using pyCycle/OpenMDAO for cycle analysis and OpenModelica for transient multidomain behavior. This is not an automatic conversion of NPSS, PSL, T-MATS or AGTF30-e.
 
-Research references may include:
+## 4. Continuum CFD, Turbulence and GPU Computing
 
--   FLOWUnsteady;
--   NeuralFoil;
--   OpenVSP;
--   SU2;
--   OpenMDAO;
--   multidisciplinary aircraft/propulsion coupling.
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [SU2](https://su2code.github.io/) | CFD, multiphysics and PDE-constrained design optimization; reusable high-fidelity adapter | **OPEN CANDIDATE**. Official site identifies LGPL 2.1. Choose the governing equations and solver configuration for each case. |
+| [URANOS](https://github.com/sdk2035/uranos-gpu) | GPU-accelerated compressible Navier–Stokes solver; optional turbulence/aerothermodynamics studies | **SPECIALIST**. Reviewed fork documents CPU/GPU execution, OpenACC and MPI, and links [upstream](https://github.com/uranos-gpu/uranos-gpu). Track both origins; compiler/GPU requirements are profile-specific. |
+| [Nek5000](https://github.com/Nek5000/Nek5000) | Scalable CFD and high-order turbulence-analysis workflows | **SPECIALIST**. Evaluate relevant examples and governing-equation support. Do not assume Nek5000 and other Nek-family projects have identical APIs or accelerator support. |
+| OpenFOAM ecosystem | Existing alternative for selected continuum CFD and heat-transfer workflows | **OPEN CANDIDATE**, retained from the source architecture. Record the exact distribution, release and solver; similarly named branches are not interchangeable. |
 
-## Electrified Propulsion
+CFD jobs should execute through a batch-job adapter with mesh, boundary-condition, solver and result manifests. GPU availability alone does not establish speed, accuracy or real-time digital-twin suitability.
 
-Research scope includes:
+## 5. High-Speed and Rarefied Gas Dynamics
 
--   electric motors;
--   generators;
--   power electronics;
--   batteries;
--   hybrid turbofans;
--   distributed propulsion;
--   hydrogen-energy concepts.
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [Gas Dynamics Toolkit — GDTk](https://gdtk.uqcloud.net/) | Gas-dynamics tools spanning small calculations and high-performance flow simulation | **SPECIALIST**. Select the actual program, gas model and validation case; the toolkit is not one uniform execution interface. |
+| [hyStrath](https://github.com/hystrath/hyStrath) | Framework of hypersonic/rarefied gas-dynamics developments, including CFD and particle methods | **SPECIALIST**. README declares GPL-3.0. Select a compatible OpenFOAM environment and verify each solver separately. |
+| [dsmcFoam+](https://github.com/hystrath/hyStrath) | OpenFOAM-based direct simulation Monte Carlo solver included in hyStrath | **SPECIALIST**. Keep a distinct catalog entry but record the shared provenance; DSMC statistical uncertainty and rarefaction validity differ from continuum CFD. |
+
+These are optional scientific-flow profiles. Select continuum or particle descriptions from the physical regime and available validation data, rather than treating every solver as an interchangeable engine model.
+
+## 6. Aerodynamics, Wakes and Aeroacoustics
+
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [NeuralFoil](https://github.com/peterdsharpe/NeuralFoil) | Fast airfoil analysis combining learned and analytical modeling; low-cost aerodynamic surrogate | **OPEN CANDIDATE**. README identifies MIT. Retain confidence output and applicability limits; a two-dimensional airfoil prediction is not a complete three-dimensional aircraft or propulsor solution. |
+| [FLOWUnsteady](https://github.com/byuflowlab/FLOWUnsteady) | Variable-fidelity unsteady aerodynamics and aeroacoustics using the reformulated vortex particle method (rVPM) | **SPECIALIST**. Candidate for wake/rotor/wing interaction studies; document actuator models, acoustics dependencies and chosen fidelity. It is not a general reacting internal-flow replacement. |
+
+OpenVSP geometry, NeuralFoil airfoil outputs, FLOWUnsteady wake studies and SU2 CFD may contribute to a common study, but the conversion, meshing and coupling adapters are proposed work.
+
+## 7. Neural PDEs, Reactive Flows and Reduced-Order Models
+
+| Resource or topic | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [Neural-PDEs](https://github.com/sdk2035/Neural-PDEs) | Neural-network approximation of PDE solutions | **RESEARCH**. The reviewed README is minimal. Inspect equations, examples, license and dependencies before selecting an implementation; do not conflate it with similarly named packages. |
+| [ModelFLOWs-combustion](https://github.com/sdk2035/ModelFLOWs-combustion) | Candidate associated with the supplied reactive-flow/ROM description | **RESEARCH / capability verification pending**. The reviewed README contains only the title; it does not substantiate an executable CFD/ROM pipeline. |
+| Complex reactive flows, mixing and thermal dynamics through CFD and ROMs | Cross-cutting workflow: generate physical snapshots, reduce the state, evaluate a surrogate, compare against withheld physical cases | **RESEARCH WORKFLOW**, not a standalone package name. Specify chemistry, transport and boundary assumptions for every reference dataset. |
+
+A neural approximation may be a direct PDE solution ansatz, an operator surrogate or a reduced model. Record which one is used. Validation should include conservation residuals, boundary-condition consistency, prediction errors, uncertainty and out-of-domain detection; training loss alone is insufficient.
+
+## 8. Aircraft Design and System Architecture Optimization
+
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [OpenMDAO](https://github.com/OpenMDAO/OpenMDAO) | Multidisciplinary analysis and optimization orchestration | **OPEN CANDIDATE**, retained as the optimization boundary. Match derivative support and optimizer dependencies to the selected profile. |
+| [Aviary](https://github.com/OpenMDAO/Aviary) | Aircraft analysis, sizing, mission analysis and optimization built on OpenMDAO | **OPEN CANDIDATE**. Couple mission demands to a propulsion model through explicit units and validity limits. Optional optimizer choices may introduce separate licensing requirements. |
+| OTA — system architecture optimization | Requested architecture-level exploration resource | **UNRESOLVED**. The acronym and description did not identify a unique authoritative project. Keep as a catalog placeholder, not an installed dependency or an alias for OpenMDAO. |
+
+## 9. Discrete Numerical Models
+
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [Yade](https://yade-dem.org/doc/) | Extensible discrete-element framework with C++ computation and Python scene/control workflows | **SPECIALIST**. Appropriate for selected granular/contact research. DEM and DSMC represent different physical/numerical methods; do not use the names interchangeably. |
+
+## 10. Space Power and Thermal-System Research
+
+| Resource | Capability and proposed role | Classification and boundary |
+|---|---|---|
+| [Space Reactor Computational Modeling](https://github.com/sdk2035/sCO2_reactor) | Reviewed README describes surrogate scripts connecting a space-reactor study to power-cycle/system-mass calculations | **RESEARCH REFERENCE ONLY**. Catalog provenance and external power-cycle/thermal interfaces; not a general reactor simulator, validated nuclear design model or core propulsion dependency. License and scope need separate review. |
+
+This optional category remains separate from the initial MVP. Its inclusion records the requested research reference; this README provides no reactor construction, fuel specification or operating design.
+
+## Source and Identity Follow-up
+
+| Item | Remaining work before adoption |
+|---|---|
+| Ptolemaeus | Supply or confirm the exact Java project URL, maintainer and license. |
+| OTA | Supply or confirm the exact architecture-optimization repository and scope. |
+| Neural-PDEs | Inspect implementation, license and reproducible examples beyond the minimal README. |
+| ModelFLOWs-combustion | Confirm that code and documentation support the requested reactive-flow, mixing, thermal and ROM capabilities. |
+| All candidates | Pin commit/release, license file, dependency versions and benchmark evidence. |
+
+The links above are discovery/provenance references, not evidence that jfxnpss has installed, tested or integrated every resource.
+
+------------------------------------------------------------------------
+
+# Integration Profiles and Open Alternatives
+
+| Profile | Proposed components | What it should demonstrate |
+|---|---|---|
+| Open cycle baseline | pyCycle + OpenMDAO | Reproducible cycle evaluation with explicit thermodynamic data |
+| Open transient multiphysics | OpenModelica + selected PropulsionSystem components | Thermal/electrical/mechanical coupling with documented initialization |
+| Aircraft and mission context | OpenVSP + Aviary; OpenAP as a separate performance reference | Traceable geometry, mission demand and propulsion inputs |
+| External aerodynamics | NeuralFoil + FLOWUnsteady or SU2 as appropriate | Different fidelity levels compared within their valid regimes |
+| CFD/HPC | Selected SU2, URANOS, Nek5000 or OpenFOAM case | Mesh/time-step study, hardware record and reproducible outputs |
+| Rarefied-flow research | Selected GDTk/hyStrath/dsmcFoam+ capability | Appropriate regime, reference case and uncertainty reporting |
+| AI/ROM research | Verified Neural-PDEs implementation or an independently selected ML backend; optional Raven | Traceable training data and held-out physical validation |
+| External-runtime comparison | PSL/NPSS or T-MATS/AGTF30-e | Licensed execution environment and comparison against open models |
+| Discrete models | Yade | A standalone validated DEM example before any coupling |
+| Specialized space-power reference | Reviewed literature/model metadata only | Clear separation from the core MVP and nuclear design work |
+
+No profile requires installing the entire catalog. Candidate tools are selected for a concrete physical question and reproducible experiment.
+
+## Proposed Adapter Architecture
+
+```mermaid
+flowchart TD
+    E["Experiment manifest"] --> O["Simulation orchestrator"]
+    O --> C["Cycle and Modelica adapters"]
+    O --> F["CFD and specialist job adapters"]
+    O --> R["ROM and numerical adapters"]
+    C --> V["Validation and result registry"]
+    F --> V
+    R --> V
+    V --> T["OpenTwin Propulsion"]
+    T --> A["Analysis and optimization"]
+    A --> E
+```
+
+**Cycle adapters** expose operating-point evaluation and convergence status. **Transient adapters** expose initialization, time advancement and event handling only where supported. **CFD adapters** submit asynchronous jobs rather than pretending to implement a real-time `step(dt)`. **ROM adapters** declare their training domain and a fallback when inputs leave it.
+
+FMI/SSP are potential interchange boundaries, not native capabilities assumed for every library. A C++, Fortran, Java, OCaml, Python or Julia implementation may instead use a command-line runner or service adapter. Keep proprietary-runtime adapters in separate optional environments.
+
+## Canonical Exchange and Reproducibility
+
+Every experiment should record:
+
+- resource URL, pinned commit/release and license evidence;
+- solver/model identity, dependency lock information and execution environment;
+- geometry/mesh IDs, property tables and dataset provenance;
+- input/output names, SI units, reference frames and time conventions;
+- convergence status, residuals and numerical tolerances;
+- supported regime, fidelity and validation status;
+- CPU/GPU/MPI configuration, elapsed time and peak memory where measured;
+- result checksums and observed/estimated/simulated state distinctions.
+
+Exchange boundaries must distinguish static from total thermodynamic quantities, molar from mass-based composition, and shaft from electrical power. Conservation and unit checks should occur at every coupling boundary. A solver failure must remain a failed result, not a plausible-looking twin state.
+
+## CFD-to-ROM Workflow
+
+1. Define a bounded physical problem and reference case.
+2. Generate converged, versioned snapshots with a suitable physical solver.
+3. Split datasets by operating condition to reduce train/test leakage.
+4. Train or reduce the model and document its representation.
+5. Compare withheld predictions and physical residuals against declared tolerances.
+6. Publish the model and its validity envelope to the registry.
+7. Route out-of-domain requests to a supported physical model or report them as unsupported.
+
+Reactive-flow datasets require explicit thermochemistry and transport assumptions. This workflow does not establish ModelFLOWs-combustion or Neural-PDEs as production-ready implementations.
+
+## Implementation Sequence
+
+| Stage | Concrete deliverable | Acceptance evidence |
+|---|---|---|
+| Catalog | Resolve uncertain identities; create per-resource manifests | All adopted resources have URLs, pinned versions and license records |
+| Baseline | One pyCycle example wrapped by the Model Interface | Reproduced reference output, units and convergence recorded |
+| Multiphysics | One OpenModelica example with selected components | Reproducible initialization and thermal/power balance |
+| CFD | One batch-run solver adapter and benchmark | Grid/time-step evidence and explicit failure handling |
+| ROM | One bounded surrogate linked to its source dataset | Held-out error, conservation checks and domain limits |
+| Twin | Replay results into OpenTwin state and visualization | Provenance and simulated/observed state remain distinguishable |
+| Optimization | One OpenMDAO/Aviary study using validated adapters | Constraints, derivative strategy and evaluation failures recorded |
+
+These deliverables extend the existing roadmap. They are proposed implementation work, not components created by this documentation update.
 
 ------------------------------------------------------------------------
 
@@ -1173,7 +1307,9 @@ Each integration should document:
 -   [x] Organize propulsion research technologies.
 -   [x] Define MBSE/CAD/CAM/CAS context.
 -   [x] Separate reference technologies conceptually.
--   [ ] Normalize catalog metadata.
+-   [x] Expand and categorize the requested simulation compendium.
+-   [ ] Resolve Ptolemaeus and OTA project identities.
+-   [ ] Normalize catalog metadata and pin source revisions.
 -   [ ] Record licenses and maturity.
 
 ## Phase 2 --- Modular Propulsion Architecture

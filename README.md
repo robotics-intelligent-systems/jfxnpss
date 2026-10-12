@@ -29,6 +29,8 @@ propulsion models.
 
 ## Table of Contents
 
+**Supersonic research demonstrator:** [high-level requirements (Spanish)](MBSE/requirements/demostrador-supersonico-requisitos.md) and [editable SysML diagram](MBSE/CAS/Drawio/demostrador-supersonico-sysml.drawio). This proposed baseline uses public Tejas/LCA Navy and TEDBF references; acceptance criteria do not establish validated performance.
+
 -   [Project Vision](#project-vision)
 -   [Description and Context](#description-and-context)
 -   [Objectives](#objectives)
